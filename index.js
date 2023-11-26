@@ -15,20 +15,20 @@ let addbtn = document.getElementById('add');
 let AllUserNotes = document.getElementById('AllUserNotes');
 
 
-let username;
-let title;
-let noteText;
 let note = '';
 
 
 async function createNote() {
     const URL = `${BASE_URL}/api/notes`;
 
+    let username = userInput.value;
+    let title = titleInput.value;
+    let noteText = noteTextInput.value;
 
     let note = {
-        username: 'aiste',
-        title: 'first note',
-        note: 'blabla'
+        username: username,
+        title: title,
+        note: noteText
     }// Skickas med som body alltså det vi vill spara i databasen
 
 
@@ -48,9 +48,9 @@ async function createNote() {
 
 
 
-async function getNotes() {
+async function getNotes(username) {
 
-    let username = userNameInput.value;
+
 
     const URL = `${BASE_URL}/api/notes/${username}`;
 
@@ -77,27 +77,23 @@ async function getNotes() {
 }
 
 
+
+
 function displayNotes(notes) {
-
-    let noteText = noteTextInput.value;
-    let title = titleInput.value;
-
-
-
+    
     for (let i = 0; i < notes.length; i++) {
         let note = notes[i];
 
 
         noteList = noteList +
             `<article>    
-    <h2 class="name">${notes[i].username}</h2>
-    <h3 class="title">${notes[i].title}</h3>
-    <p class="text">${notes[i].note}</p>
- </article> `
+            <h2 class="name">${notes[i].username}</h2>
+            <h3 class="title">${notes[i].title}</h3>
+            <p class="text">${notes[i].note}</p>
+        </article> `
     }
     AllUserNotes.innerHTML = noteList;
 }
-
 
 
 
@@ -107,6 +103,4 @@ addbtn.addEventListener('click', function () {
 });
 
 
-showbtn.addEventListener('click', function () {
-    getNotes();
-});
+showbtn.addEventListener('click', () => getNotes(userNameInput.value));
