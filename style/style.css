@@ -1,0 +1,45 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    background-image: url(/style/images/360_F_124059996_1C70Efi3TbQ5kA7zVOWXpbo3Uk0JmxKd.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui;
+}
+
+header{
+    font-style:oblique;
+    font-variant: small-caps ;
+    margin-bottom: auto;
+    margin-top:5%;
+    font-size: 20px;
+}
+
+p,button{
+    font-family: monospace;
+}
+
+article{
+    display: flex;
+    margin-bottom: 100px;
+}
+
+footer{
+    margin-right: 340px;
+}
+
+.notelist{
+    margin-top: 50px;
+}
+
+button{
+    border-radius: 10%;
+    border-style:dotted;
+}

@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/style.css">
     <title>Swing notes</title>
 </head>
-<body>
-    Username <input id="userNameInput">
-    <button id="shownotes">Get notes</button>
-    <h1>Create new note</h1>
-    Username <input id="userinput">
-    Title <input id="titleinput">
-    Note <input id="textinput">
-    <button id="add">Add note</button>
 
-    <h3>Note list:</h3>
-    <p id="AllUserNotes"></p>
+<body>
+    <header>
+        <h1>Swing notes</h1>
+    </header>
+    <main>
+        <h2>Create new note</h2>
+        <article>
+            <div>
+                <p>Username</p>
+                <input id="userinput">
+            </div>
+            <div>
+                <p>Title</p>
+                <input id="titleinput">
+            </div>
+            <div>
+                <p>Note</p>
+                <input id="textinput">
+                <button id="add">Add note</button>
+            </div>
+        </article>
+    </main>
+    <footer>
+        <h2>Show all saved notes</h2>
+        <p>Username</p><input id="userNameInput">
+        <button id="shownotes">Get notes</button>
+        <h2 class="notelist">Note list:</h2>
+        <p id="AllUserNotes"></p>
+    </footer>
     <script src="/index.js"></script>
 </body>
+
 </html>
