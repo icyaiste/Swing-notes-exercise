@@ -1,25 +1,31 @@
 let BASE_URL = 'https://o6wl0z7avc.execute-api.eu-north-1.amazonaws.com';
-let noteList = '';
+let noteList = [];
 
 //Inputfält
+let userNameInput = document.getElementById('userNameInput');
 let userInput = document.getElementById('userinput');
 let titleInput = document.getElementById('titleinput');
 let noteTextInput = document.getElementById('textinput');
+
 
 //Buttons
 let showbtn = document.getElementById('shownotes');
 let addbtn = document.getElementById('add');
 
-const AllUserNotes = document.getElementById('AllUserNotes');
+let AllUserNotes = document.getElementById('AllUserNotes');
 
 
-
+let username;
+let title;
+let noteText;
+let note = '';
 
 
 async function createNote() {
     const URL = `${BASE_URL}/api/notes`;
 
-    const note = {
+
+    let note = {
         username: 'aiste',
         title: 'first note',
         note: 'blabla'
@@ -37,42 +43,59 @@ async function createNote() {
     const data = await response.json();
 
     console.log(data);
-    //noteList.push(note);
+    noteList.push(note);
 }
-
-
 
 
 
 async function getNotes() {
-    let title = titleInput.value;
-    let noteText = noteTextInput.value;
-    let username = userInput.value;
 
+    let username = userNameInput.value;
 
-    const URL = `${BASE_URL}/api/notes/:username`;
+    const URL = `${BASE_URL}/api/notes/${username}`;
 
-    let response = await fetch(URL, {
-        method: "GET",
-    });
-    const data = await response.json();
-    console.log(username);
-    console.log(data);
+    try {
+        let response = await fetch(URL, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
+            },
+        });
+        const data = await response.json();
 
-    displayNotes(username,title,noteText);
+        //console.log(username);
+        //console.log(data);
+
+        let notes = data.notes;
+        console.log(notes);
+
+        displayNotes(notes);
+
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 
-function displayNotes(username,title,noteText) {
+function displayNotes(notes) {
 
-noteList = noteList + 
-`<article>    
-    <h2 class="name">${username}</h2>
-    <h3 class="title">${title}</h3>
-    <p class="text">${noteText}</p>
+    let noteText = noteTextInput.value;
+    let title = titleInput.value;
+
+
+
+    for (let i = 0; i < notes.length; i++) {
+        let note = notes[i];
+
+
+        noteList = noteList +
+            `<article>    
+    <h2 class="name">${notes[i].username}</h2>
+    <h3 class="title">${notes[i].title}</h3>
+    <p class="text">${notes[i].note}</p>
  </article> `
-
- AllUserNotes.innerHTML = noteList;
+    }
+    AllUserNotes.innerHTML = noteList;
 }
 
 
