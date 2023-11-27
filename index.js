@@ -12,7 +12,7 @@ let noteTextInput = document.getElementById('textinput');
 //Buttons
 let showbtn = document.getElementById('shownotes');
 let addbtn = document.getElementById('add');
-let deletebtn = document.getElementById('deletenote');
+let deletebtn = document.getElementById('deletebtn');
 
 
 let allUserNotes = document.getElementById('allUserNotes');
@@ -80,22 +80,35 @@ async function getNotes(username) {
 
 
 function displayNotes(notes) {
-    allUserNotes.innerHTML = "";
-    
+    //allUserNotes.innerHTML = "";
+
     notes.forEach(note => {
        let newNotes = document.createElement('article');
+
+       newNotes.setAttribute('note-id', note.id);
+ 
        newNotes.innerHTML = `<h2 class="name">${note.username}</h2>
             <h3 class="title">${note.title}</h3>
             <p class="text">${note.note}</p>
-            <p class="id">${note.id}</p>`
-      allUserNotes.appendChild(newNotes);      
+            <p class="id">${note.id}</p>
+            <button class="deletebtn" id="deletebtn">Delete Note</button>`;
+
+      allUserNotes.appendChild(newNotes);
     });
     
+    document.querySelectorAll('.deletebtn').forEach(deleteButton => {
+        deleteButton.addEventListener('click', () =>{
+            // Find the closest 'article' element and get its 'note-id' attribute
+            const noteID =deleteButton.parentNode.getAttribute('note-id');
+            deleteNote(noteID);
+            deleteButton.parentNode.remove();
+        });
+    });
 }
 
 
 
-async function deleteNote(notes) {
+async function deleteNote(id) {
     const URL = `${BASE_URL}/api/notes/${id}`;
     try {
         let response = await fetch(URL, {
@@ -140,5 +153,3 @@ addbtn.addEventListener('click', function () {
 
 
 showbtn.addEventListener('click', () => getNotes(userNameInput.value));
-
-deletebtn.addEventListener('click', () => deleteNote(note));
