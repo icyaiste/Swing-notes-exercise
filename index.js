@@ -6,14 +6,16 @@ let userNameInput = document.getElementById('userNameInput');
 let userInput = document.getElementById('userinput');
 let titleInput = document.getElementById('titleinput');
 let noteTextInput = document.getElementById('textinput');
+//let userId = document.getElementById('userNameInput');
 
 
 //Buttons
 let showbtn = document.getElementById('shownotes');
 let addbtn = document.getElementById('add');
+let deletebtn = document.getElementById('deletenote');
 
-let AllUserNotes = document.getElementById('AllUserNotes');
 
+let allUserNotes = document.getElementById('allUserNotes');
 
 let note = '';
 
@@ -50,8 +52,6 @@ async function createNote() {
 
 async function getNotes(username) {
 
-
-
     const URL = `${BASE_URL}/api/notes/${username}`;
 
     try {
@@ -80,22 +80,58 @@ async function getNotes(username) {
 
 
 function displayNotes(notes) {
+    allUserNotes.innerHTML = "";
     
-    for (let i = 0; i < notes.length; i++) {
-        let note = notes[i];
-
-
-        noteList = noteList +
-            `<article>    
-            <h2 class="name">${notes[i].username}</h2>
-            <h3 class="title">${notes[i].title}</h3>
-            <p class="text">${notes[i].note}</p>
-        </article> `
-    }
-    AllUserNotes.innerHTML = noteList;
+    notes.forEach(note => {
+       let newNotes = document.createElement('article');
+       newNotes.innerHTML = `<h2 class="name">${note.username}</h2>
+            <h3 class="title">${note.title}</h3>
+            <p class="text">${note.note}</p>
+            <p class="id">${note.id}</p>`
+      allUserNotes.appendChild(newNotes);      
+    });
+    
 }
 
 
+
+async function deleteNote(notes) {
+    const URL = `${BASE_URL}/api/notes/${id}`;
+    try {
+        let response = await fetch(URL, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
+            },
+        });
+
+        const data = await response.json();
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+/*
+async function updateNote(){
+
+const URL = `${BASE_URL}/api/notes/${id}`;
+
+let note = {
+    note: 'updaterat innehåll'
+  }
+  
+  let response = await fetch("URL", {
+    method: "PUT",
+    body: JSON.stringify(note), // Gör om till ett JSON objekt
+    headers: {
+      'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
+    }
+  });
+}
+*/
 
 
 addbtn.addEventListener('click', function () {
@@ -104,3 +140,5 @@ addbtn.addEventListener('click', function () {
 
 
 showbtn.addEventListener('click', () => getNotes(userNameInput.value));
+
+deletebtn.addEventListener('click', () => deleteNote(note));
