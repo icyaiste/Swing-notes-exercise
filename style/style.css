@@ -1,4 +1,4 @@
-body{
+body {
     width: 100vw;
     height: 100vh;
     margin: 0;
@@ -14,32 +14,39 @@ body{
     font-family: system-ui;
 }
 
-header{
-    font-style:oblique;
-    font-variant: small-caps ;
-    margin-bottom: auto;
-    margin-top:5%;
-    font-size: 20px;
+.whole {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgb(181, 157, 181);
+    border-radius: 20%;
+    padding: 60px;
+    padding-bottom: 50px;
 }
 
-p,button{
+header {
+    font-style: oblique;
+    font-variant: small-caps;
+    margin-top: 1%;
+    font-size: 2rem;
+    color: #C2AECF;
+}
+
+p,
+button,
+h2 {
     font-family: monospace;
 }
 
-article{
+article {
     display: flex;
     margin-bottom: 100px;
 }
 
-footer{
-    margin-right: 340px;
-}
-
-.notelist{
+footer {
     margin-top: 50px;
 }
 
-button{
+button {
     border-radius: 10%;
-    border-style:dotted;
+    border-style: dotted;
 }

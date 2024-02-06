@@ -1,5 +1,17 @@
-let BASE_URL = 'https://o6wl0z7avc.execute-api.eu-north-1.amazonaws.com';
-let noteList = [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, query, where, updateDoc, increment, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC9RiHvEQpOKdYhg7DCYXQnacdiRcaZGtw",
+    authDomain: "to-do-app-944bb.firebaseapp.com",
+    projectId: "to-do-app-944bb",
+    storageBucket: "to-do-app-944bb.appspot.com",
+    messagingSenderId: "117745084840",
+    appId: "1:117745084840:web:a451f19b059ee63818159d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 //Inputfält
 let userNameInput = document.getElementById('userNameInput');
@@ -12,144 +24,109 @@ let noteTextInput = document.getElementById('textinput');
 //Buttons
 let showbtn = document.getElementById('shownotes');
 let addbtn = document.getElementById('add');
-let deletebtn = document.getElementById('deletebtn');
+
 
 
 let allUserNotes = document.getElementById('allUserNotes');
 
-let note = '';
-
 
 async function createNote() {
-    const URL = `${BASE_URL}/api/notes`;
 
     let username = userInput.value;
     let title = titleInput.value;
     let noteText = noteTextInput.value;
+    //let noteID = String(Math.floor(Math.random() * 101));
 
-    let note = {
-        username: username,
-        title: title,
-        note: noteText
-    }// Skickas med som body alltså det vi vill spara i databasen
+    // let note = {
+    //     username: username,
+    //     title: title,
+    //     note: noteText
+    // }// Skickas med som body alltså det vi vill spara i databasen
 
-
-    let response = await fetch(URL, {
-        method: "POST",
-        body: JSON.stringify(note), // Gör om till ett JSON objekt
-        headers: {
-            'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
-        },
-    });
-
-    const data = await response.json();
-
-    console.log(data);
-    noteList.push(note);
+    await addDoc(collection(db, 'Notes'),
+        {
+            username: username,
+            title: title,
+            note: noteText,
+            // id: note
+        });
 }
+// let response = await fetch(URL, {
+//     method: "POST",
+//     body: JSON.stringify(note), // Gör om till ett JSON objekt
+//     headers: {
+//         'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
+//     },
+// });
+
+// const data = await response.json();
+
+//console.log(data);
+//noteList.push(note);
+
 
 
 
 async function getNotes(username) {
+    const noteList = await getDocs(collection(db, 'Notes'));
 
-    const URL = `${BASE_URL}/api/notes/${username}`;
+    noteList.forEach(notes => {// Loopar igenom våran collection
+        const note = notes.data();
 
-    try {
-        let response = await fetch(URL, {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
-            },
-        });
-        const data = await response.json();
+        const noteId = notes.id;
 
-        //console.log(username);
-        //console.log(data);
+        let allNotes = document.createElement('article');
 
-        let notes = data.notes;
-        console.log(notes);
+        allNotes.innerHTML = `<h2 class="name">${note.username}</h2>
+                    <h3 class="title">${note.title}</h3>
+                    <p class="text">${note.note}</p>
+                    <button class="deletebtn" id="deletebtn">Delete Note</button>
+                    <button class="updatebtn" id="updatebtn">Update Note</button>`;
 
-        displayNotes(notes);
+        allUserNotes.appendChild(allNotes);
 
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-
-
-function displayNotes(notes) {
-    //allUserNotes.innerHTML = "";
-
-    notes.forEach(note => {
-       let newNotes = document.createElement('article');
-
-       newNotes.setAttribute('note-id', note.id);
- 
-       newNotes.innerHTML = `<h2 class="name">${note.username}</h2>
-            <h3 class="title">${note.title}</h3>
-            <p class="text">${note.note}</p>
-            <p class="id">${note.id}</p>
-            <button class="deletebtn" id="deletebtn">Delete Note</button>`;
-
-      allUserNotes.appendChild(newNotes);
-    });
+        let deletebtn = allNotes.querySelector('.deletebtn');
     
-    document.querySelectorAll('.deletebtn').forEach(deleteButton => {
-        deleteButton.addEventListener('click', () =>{
-            // Find the closest 'article' element and get its 'note-id' attribute
-            const noteID =deleteButton.parentNode.getAttribute('note-id');
-            deleteNote(noteID);
-            deleteButton.parentNode.remove();
+        deletebtn.addEventListener('click', () => {
+            //console.log('klik');
+            deleteNote(notes.id);
+        });
+
+        updatebtn.addEventListener('click', () => {
+            updateNote(noteId);
         });
     });
 }
 
+// allNotes.setAttribute('note-id', note.id);
 
 
-async function deleteNote(id) {
-    const URL = `${BASE_URL}/api/notes/${id}`;
-    try {
-        let response = await fetch(URL, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
-            },
-        });
-
-        const data = await response.json();
-
-    } catch (error) {
-        console.log(error);
-    }
-}
+// Find the closest 'article' element and get its 'note-id' attribute
+//   const noteID = allNotes.getAttribute('note-id');
 
 
 
-/*
-async function updateNote(){
+//     updateNote(id);
+// });
 
-const URL = `${BASE_URL}/api/notes/${id}`;
+async function deleteNote(noteId) {
+            await deleteDoc(doc(db, 'Notes', noteId));
+        }
 
-let note = {
-    note: 'updaterat innehåll'
-  }
-  
-  let response = await fetch("URL", {
-    method: "PUT",
-    body: JSON.stringify(note), // Gör om till ett JSON objekt
-    headers: {
-      'Content-Type': 'application/json' // Berätta för servern att det vi skickar med är ett JSON objekt
-    }
-  });
-}
-*/
+
+async function updateNote(noteId) {
+            const updateNoteContent = prompt("Enter a new note");
+            await updateDoc(doc(db, 'Notes', noteId),
+                {
+                    note: updateNoteContent
+                });
+        }
 
 
 addbtn.addEventListener('click', function () {
-    createNote();
-});
+            createNote();
+            console.log('Note is created!');
+        });
 
 
 showbtn.addEventListener('click', () => getNotes(userNameInput.value));
